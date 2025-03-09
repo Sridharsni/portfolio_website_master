@@ -1,40 +1,41 @@
 "use server";
 
-import React from "react";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { validateString, getErrorMessage } from "@/lib/utils";
-import ContactFormEmail from "@/email/contact-form-email";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (formData: FormData) => {
-  const senderEmail = formData.get("senderEmail") as string;
-  const message = formData.get("message") as string;
+  const senderEmail = formData.get("senderEmail"); // Recruiter's email
+  const message = formData.get("message"); // Message content
 
-  // ✅ Validate email format & ensure it's not empty
-  if (!senderEmail || !senderEmail.includes("@") || !validateString(senderEmail, 500)) {
-    return { error: "Please enter a valid email address." };
+  // Simple validation
+  if (!validateString(senderEmail, 500)) {
+    return { error: "Invalid sender email" };
   }
-
-  // ✅ Validate message content
   if (!validateString(message, 5000)) {
-    return { error: "Message is too long or invalid." };
+    return { error: "Invalid message" };
   }
+
+  // Configure SMTP transporter
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER, // Your email (receiver)
+      pass: process.env.GMAIL_PASS, // Gmail App Password
+    },
+  });
+
+  const mailOptions = {
+    from: `"Sridharsni Portfolio Contact Form" <${process.env.GMAIL_USER}>`, // Your email
+    to: "ssivak23@asu.edu", // Your email (receiver)
+    subject: "New Contact Form Submission",
+    text: `From: ${senderEmail}\n\nMessage:\n${message}`, // Plain text
+    replyTo: senderEmail, // Allows you to reply to the sender
+  };
 
   try {
-    const data = await resend.emails.send({
-      from: "onboarding@resend.dev", // ✅ Default verified sender
-      to: "ssivak23@asu.edu", // ✅ Your email
-      subject: "New Contact Form Message",
-      reply_to: senderEmail, // ✅ Allows replying directly to the user
-      react: React.createElement(ContactFormEmail, {
-        message: message,
-        senderEmail: senderEmail,
-      }),
-    });
-
-    return { data };
-  } catch (error: unknown) {
+    await transporter.sendMail(mailOptions);
+    return { data: "Email sent successfully!" };
+  } catch (error) {
     return { error: getErrorMessage(error) };
   }
 };
