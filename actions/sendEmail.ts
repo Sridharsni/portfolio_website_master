@@ -8,40 +8,33 @@ import ContactFormEmail from "@/email/contact-form-email";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (formData: FormData) => {
-  const senderEmail = formData.get("senderEmail");
-  const message = formData.get("message");
+  const senderEmail = formData.get("senderEmail") as string;
+  const message = formData.get("message") as string;
 
-  // simple server-side validation
-  if (!validateString(senderEmail, 500)) {
-    return {
-      error: "Invalid sender email",
-    };
+  // ✅ Validate email format & ensure it's not empty
+  if (!senderEmail || !senderEmail.includes("@") || !validateString(senderEmail, 500)) {
+    return { error: "Please enter a valid email address." };
   }
+
+  // ✅ Validate message content
   if (!validateString(message, 5000)) {
-    return {
-      error: "Invalid message",
-    };
+    return { error: "Message is too long or invalid." };
   }
 
-  let data;
   try {
-    data = await resend.emails.send({
-      from: "Sridharsni Portfolio <your_verified_email@yourdomain.com>",
-      to: "ssivak23@asu.edu",
-      subject: "Message from contact form",
-      reply_to: senderEmail,
+    const data = await resend.emails.send({
+      from: "onboarding@resend.dev", // ✅ Default verified sender
+      to: "ssivak23@asu.edu", // ✅ Your email
+      subject: "New Contact Form Message",
+      reply_to: senderEmail, // ✅ Allows replying directly to the user
       react: React.createElement(ContactFormEmail, {
         message: message,
         senderEmail: senderEmail,
       }),
     });
-  } catch (error: unknown) {
-    return {
-      error: getErrorMessage(error),
-    };
-  }
 
-  return {
-    data,
-  };
+    return { data };
+  } catch (error: unknown) {
+    return { error: getErrorMessage(error) };
+  }
 };
