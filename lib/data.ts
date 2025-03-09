@@ -67,22 +67,22 @@ export const projectsData = [
   {
     title: "🚀 SkyComm: AI-Powered ATC Error Correction",
     description:
-      "An AI system that listens to air traffic conversations, detects communication errors using Whisper AI, and corrects errors with a T5 model to improve flight safety.",
+      "An AI system that listens to air traffic conversations, detects communication errors, and corrects errors with a T5 model to improve flight safety.",
     tags: ["Python", "PyTorch", "Whisper AI", "T5 Transformer", "ALMS", "Active Learning", "JiWER"],
     imageUrl: corpcommentImg,
   },
   {
-    title: "📈 TradeSense: LLM-Powered Predictive Trading Systemev",
+    title: "📈 TradeSense: LLM-Powered Predictive Trading System",
     description:
-      "An AI-powered tool that analyzes real-time market trends using DeepSeek AI and Apache Spark to predict stock movements for companies like Netflix and Nvidia.",
+      "An AI-powered tool that analyzes real-time market trends using DeepSeek AI and predict stock movements for companies like Netflix and Nvidia.",
     tags: ["Python", "TensorFlow", "LLM", "DeepSeek", "Kafka", "Apache Spark"],
     imageUrl: rmtdevImg,
   },
   {
-    title: "Word Analytics",
+    title: "📊 FrugalFox: AI-Powered Expense Tracker",
     description:
-      "A public web app for quick analytics on text. It shows word count, character count and social media post limits.",
-    tags: ["React", "Next.js", "SQL", "Tailwind", "Framer"],
+      "I developed FrugalFox, a finance tracking app that analyzes spending patterns, predicts future expenses, and provides smart budgeting insights.",
+    tags: ["Python", "Flask", "PostgreSQL", "scikit-learn", "Machine Learning"],
     imageUrl: wordanalyticsImg,
   },
 ] as const;
